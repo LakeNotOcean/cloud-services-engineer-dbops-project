@@ -17,4 +17,6 @@
 3. Выдать доступ ко всем привелегиям сервисному пользователю миграции:
     ```
     GRANT ALL PRIVILEGES ON DATABASE <DB_NAME> TO <DB_USER>;
+    -- Предварительно требуется подключиться к БД к <DB_NAME>
+    GRANT USAGE, CREATE ON SCHEMA public TO <DB_USER>;
     ```
