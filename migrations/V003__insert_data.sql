@@ -1,4 +1,4 @@
--- Вставка продуктов
+-- вставка продуктов
 INSERT INTO public.product (id, name, picture_url, price) VALUES
 (1, 'Сливочная', 'https://res.cloudinary.com/sugrobov/image/upload/v1623323635/repos/sausages/6.jpg', 320.00),
 (2, 'Особая', 'https://res.cloudinary.com/sugrobov/image/upload/v1623323635/repos/sausages/5.jpg', 179.00),
@@ -7,18 +7,18 @@ INSERT INTO public.product (id, name, picture_url, price) VALUES
 (5, 'Мюнхенская', 'https://res.cloudinary.com/sugrobov/image/upload/v1623323635/repos/sausages/2.jpg', 330.00),
 (6, 'Русская', 'https://res.cloudinary.com/sugrobov/image/upload/v1623323635/repos/sausages/1.jpg', 189.00);
 
--- втавка заказов
+-- генерация 10_000_000 заказов со случайным статусом и датой за последние 90 дней
 INSERT INTO public.orders 
     (id, status, date_created)
 SELECT i,
-       (ARRAY['pending', 'shipped', 'cancelled'])[floor(random() * 3 + 1)],
-       CURRENT_DATE - (random() * 90)::int
+    (ARRAY['pending', 'shipped', 'cancelled'])[floor(random() * 3 + 1)],
+    CURRENT_DATE - (random() * 90)::int
 FROM generate_series(1, 10000000) s(i);
 
--- добавление продуктов к заказам
+-- генерация 10_000_000 записей в order_product (один продукт для каждого из заказов)
 INSERT INTO public.order_product 
     (quantity, order_id, product_id)
 SELECT floor(1 + random() * 50)::int,
-       i,
-       1 + floor(random() * 6)::int
+    i,
+    1 + floor(random() * 6)::int
 FROM generate_series(1, 10000000) s(i);

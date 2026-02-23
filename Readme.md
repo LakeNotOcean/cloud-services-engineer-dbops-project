@@ -4,7 +4,7 @@
 
 # Настройка БД
 
-Для успещного применения миграций необходимо:
+Для успешного применения миграций необходимо выполнить следующие шаги:
 
 1. Создать БД:
     ```
@@ -17,7 +17,7 @@
 3. Выдать доступ ко всем привелегиям сервисному пользователю миграции:
     ```
     GRANT ALL PRIVILEGES ON DATABASE <DB_NAME> TO <DB_USER>;
-    -- Предварительно требуется подключиться к БД к <DB_NAME>
+    -- Для следующего шага предварительно требуется подключиться к БД к <DB_NAME>
     GRANT USAGE, CREATE ON SCHEMA public TO <DB_USER>;
     ```
 
@@ -72,9 +72,35 @@ GROUP BY
 
 ### Выполнение запроса после добавления индексов
 
-Время выполнения: 
+Время выполнения:  5353.964 ms (00:05.354)
 
 План выполнения:
 ```
+                                                                   QUERY PLAN
+------------------------------------------------------------------------------------------------------------------------------------------------
+ Finalize GroupAggregate  (cost=188203.48..188226.53 rows=91 width=12)
+   Group Key: o.date_created
+   ->  Gather Merge  (cost=188203.48..188224.71 rows=182 width=12)
+         Workers Planned: 2
+         ->  Sort  (cost=187203.45..187203.68 rows=91 width=12)
+               Sort Key: o.date_created
+               ->  Partial HashAggregate  (cost=187199.58..187200.49 rows=91 width=12)
+                     Group Key: o.date_created
+                     ->  Parallel Hash Join  (cost=70389.22..186687.71 rows=102375 width=8)
+                           Hash Cond: (op.order_id = o.id)
+                           ->  Parallel Seq Scan on order_product op  (cost=0.00..105361.13 rows=4166613 width=12)
+                           ->  Parallel Hash  (cost=69109.50..69109.50 rows=102378 width=12)
+                                 ->  Parallel Bitmap Heap Scan on orders o  (cost=3366.94..69109.50 rows=102378 width=12)
+                                       Recheck Cond: (((status)::text = 'shipped'::text) AND (date_created > (now() - '7 days'::interval)))
+                                       ->  Bitmap Index Scan on orders_status_date_idx  (cost=0.00..3305.51 rows=245707 width=0)
+                                             Index Cond: (((status)::text = 'shipped'::text) AND (date_created > (now() - '7 days'::interval)))
+ JIT:
+   Functions: 18
+   Options: Inlining false, Optimization false, Expressions true, Deforming true
+(19 rows)
 ```
 
+### Вывод
+
+* Создание индексов ускорило запрос примерно в 7.5 раз;
+* Ключевой вклад внес индекс *orders_status_date_idx*. Вместо полного последовательного сканирования *Parallel Seq Scan*
