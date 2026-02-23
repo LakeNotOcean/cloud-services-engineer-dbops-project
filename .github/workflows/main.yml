@@ -12,9 +12,9 @@ jobs:
 
     - name: Install Flyway
       run: |
-        curl -L -o flyway-commandline.tar.gz "https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/11.1.0/flyway-commandline-11.1.0-linux-x64.tar.gz" && \ 
+        curl -L -o flyway-commandline.tar.gz "https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/11.1.0/flyway-commandline-11.1.0-linux-x64.tar.gz" && \
         tar -xzf flyway-commandline.tar.gz && \
-        sudo ln -s \`pwd\`/flyway-11.1.0/flyway /usr/local/bin/flyway
+        sudo ln -s $(pwd)/flyway-11.1.0/flyway /usr/local/bin/flyway
       
     - name: Create Flyway config
       run: |
