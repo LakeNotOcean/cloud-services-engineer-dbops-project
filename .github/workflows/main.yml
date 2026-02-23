@@ -13,12 +13,12 @@ jobs:
     - name: Install Flyway
       run: |
         curl -L -o flyway-commandline.tar.gz "https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/11.1.0/flyway-commandline-11.1.0-linux-x64.tar.gz" && \ 
-        -xzf flyway-commandline.tar.gz && \
+        tar -xzf flyway-commandline.tar.gz && \
         sudo ln -s \`pwd\`/flyway-11.1.0/flyway /usr/local/bin/flyway
       
     - name: Create Flyway config
       run: |
-        cat > flayway.conf << EOF
+        cat > flyway.conf << EOF
         flyway.url=jdbc:postgresql://${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}
         flyway.user=${{ secrets.DB_USER }}
         flyway.password=${{ secrets.DB_PASSWORD }}
