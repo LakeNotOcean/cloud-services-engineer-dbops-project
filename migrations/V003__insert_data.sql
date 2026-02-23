@@ -15,6 +15,7 @@ SELECT i,
        CURRENT_DATE - (random() * 90)::int
 FROM generate_series(1, 10000000) s(i);
 
+-- добавление продуктов к заказам
 INSERT INTO public.order_product 
     (quantity, order_id, product_id)
 SELECT floor(1 + random() * 50)::int,
